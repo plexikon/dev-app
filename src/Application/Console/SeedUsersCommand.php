@@ -15,18 +15,32 @@ final class SeedUsersCommand extends Command
     {
         $faker = Factory::create();
 
-        $count = $num = $this->argument('num');
+        $count = $num = (int)$this->argument('num');
 
         while ($num !== 0) {
             $this->callSilent('app:register_user', [
-                'user_id' => $faker->uuid,
+                'user_id' => $userId = $faker->uuid,
                 'user_email' => $faker->email,
                 'user_password' => $faker->password(ClearPassword::MIN_LENGTH, ClearPassword::MAX_LENGTH),
             ]);
 
+            $this->changeEmail($count, $userId, $faker->email);
+
             --$num;
         }
 
-        $this->info("$count user(s) registered");
+        $this->info("$count user(s) registered and email changed");
+    }
+
+    private function changeEmail(int $num, string $userId, string $newEmail): void
+    {
+        while ($num !== 0) {
+            $this->callSilent('app:change_user_email', [
+                'user_id' => $userId,
+                'new_user_email' => $newEmail
+            ]);
+
+            --$num;
+        }
     }
 }
