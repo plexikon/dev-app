@@ -15,6 +15,7 @@ use Plexikon\DevApp\Application\Console\UserReadModelProjectionCommand;
 use Plexikon\DevApp\Infrastructure\Repository\ChronicleUserCollection;
 use Plexikon\DevApp\Infrastructure\Service\BcryptPasswordEncoder;
 use Plexikon\DevApp\Infrastructure\Service\UniqueEmailFromRead;
+use Plexikon\DevApp\Model\User\Handler\ChangeUserEmailHandler;
 use Plexikon\DevApp\Model\User\Handler\GetUserByEmailHandler;
 use Plexikon\DevApp\Model\User\Handler\GetUserByIdHandler;
 use Plexikon\DevApp\Model\User\Handler\PaginateUsersHandler;
@@ -34,7 +35,8 @@ class UserServiceProvider extends ServiceProvider implements DeferrableProvider
 
     protected array $reporters = [
         'command' => [
-            'register-user' => RegisterUserHandler::class
+            'register-user' => RegisterUserHandler::class,
+            'change-user-email' => ChangeUserEmailHandler::class,
         ],
 
         'query' => [
@@ -44,9 +46,8 @@ class UserServiceProvider extends ServiceProvider implements DeferrableProvider
         ],
 
         'event' => [
-            'user-registered' => [
-                //
-            ]
+            'user-registered' => [],
+            'user-email-changed' => [],
         ]
     ];
 

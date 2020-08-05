@@ -5,6 +5,7 @@ namespace Plexikon\DevApp\Application\Console;
 
 use Plexikon\Chronicle\Support\Console\AbstractPersistentProjectionCommand;
 use Plexikon\Chronicle\Support\Contract\Messaging\MessageHeader;
+use Plexikon\DevApp\Model\User\Event\UserEmailChanged;
 use Plexikon\DevApp\Model\User\Event\UserRegistered;
 use Plexikon\DevApp\Projection\Stream;
 use Plexikon\DevApp\Projection\User\UserReadModel;
@@ -38,6 +39,12 @@ final class UserReadModelProjectionCommand extends AbstractPersistentProjectionC
                 $state['count']++;
                 return $state;
             },
+
+            'user-email-changed' => function (array $state, UserEmailChanged $event): void {
+                $this->readModel()->stack('update', $event->aggregateRootId(), [
+                    'email' => $event->currentEmail()->toString()
+                ]);
+            }
         ];
     }
 }
