@@ -18,6 +18,7 @@ final class UserReadModel extends ReadModelConnection
             $table->uuid('id')->primary();
             $table->string('email')->unique();
             $table->string('password');
+            $table->timestampsTz();
         };
     }
 
