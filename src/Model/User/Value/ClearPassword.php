@@ -25,7 +25,7 @@ class ClearPassword extends Password
      */
     public static function validate(string $clearPassword): bool
     {
-        Assertion::between($clearPassword, self::MIN_LENGTH, self::MAX_LENGTH);
+        Assertion::betweenLength($clearPassword, self::MIN_LENGTH, self::MAX_LENGTH);
 
         return true;
     }

@@ -51,10 +51,12 @@ class UserServiceProvider extends ServiceProvider implements DeferrableProvider
     ];
 
     protected array $userRepository = [
-        'stream_name' => User::class,
-        'chronicler_id' => Chronicler::class,
-        'cache' => 10000,
-        'decorators' => []
+        Stream::USER_STREAM => [
+            'aggregate_class_name' => User::class,
+            'chronicler_id' => Chronicler::class,
+            'cache' => 10000,
+            'event_decorators' => []
+        ]
     ];
 
     public function register(): void
@@ -69,14 +71,14 @@ class UserServiceProvider extends ServiceProvider implements DeferrableProvider
                 $this->userRepository
             ));
 
-            $this->app->bind(UserCollection::class, function (Application $app): UserCollection {
+            $this->app->singleton(UserCollection::class, function (Application $app): UserCollection {
                 $repository = $app->get(ChronicleRepositoryManager::class)->create(Stream::USER_STREAM);
 
                 return new ChronicleUserCollection($repository);
             });
         }
 
-        if (!$repository->has('reporter')) {
+        if ($repository->has('reporter')) {
             foreach ($this->reporters as $reporterType => $message) {
                 $typeKey = "reporter.reporting.$reporterType.default.map";
 

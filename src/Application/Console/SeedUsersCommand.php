@@ -18,8 +18,10 @@ final class SeedUsersCommand extends Command
         $count = $num = $this->argument('num');
 
         while ($num !== 0) {
-            $this->call('register_user', [
-                $faker->uuid, $faker->email, $faker->password(ClearPassword::MIN_LENGTH, ClearPassword::MAX_LENGTH)
+            $this->callSilent('app:register_user', [
+                'user_id' => $faker->uuid,
+                'user_email' => $faker->email,
+                'user_password' => $faker->password(ClearPassword::MIN_LENGTH, ClearPassword::MAX_LENGTH),
             ]);
 
             --$num;

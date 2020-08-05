@@ -26,7 +26,7 @@ final class RegisterUser extends Command
 
     public function email(): EmailAddress
     {
-        return EmailAddress::fromString($this->payload['email']);
+        return EmailAddress::fromString($this->payload['user_email']);
     }
 
     public function clearPassword(): ClearPassword

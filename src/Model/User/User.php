@@ -26,7 +26,7 @@ final class User implements AggregateRoot
         return $self;
     }
 
-    public function apply(UserRegistered $event): void
+    public function applyUserRegistered(UserRegistered $event): void
     {
         $this->email = $event->email();
         $this->password = $event->password();
