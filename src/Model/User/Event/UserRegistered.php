@@ -19,6 +19,7 @@ final class UserRegistered extends AggregateChanged
             'email' => $email->toString(),
             'password' => $password->toString()
         ]);
+
         $self->email = $email;
         $self->password = $password;
 
@@ -35,7 +36,7 @@ final class UserRegistered extends AggregateChanged
         return $this->email ?? EmailAddress::fromString($this->payload['email']);
     }
 
-    public function encodedPassword(): BcryptPassword
+    public function password(): BcryptPassword
     {
         return $this->password ?? BcryptPassword::fromString($this->payload['password']);
     }

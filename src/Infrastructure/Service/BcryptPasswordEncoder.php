@@ -6,7 +6,7 @@ namespace Plexikon\DevApp\Infrastructure\Service;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Hashing\BcryptHasher;
 use Plexikon\DevApp\Exception\RuntimeException;
-use Plexikon\DevApp\Model\User\Repository\PasswordEncoder;
+use Plexikon\DevApp\Model\User\Service\PasswordEncoder;
 use Plexikon\DevApp\Model\User\Value\BcryptPassword;
 use Plexikon\DevApp\Model\User\Value\ClearPassword;
 use Plexikon\DevApp\Model\User\Value\EncodedPassword;

@@ -17,6 +17,7 @@ final class UserReadModel extends ReadModelConnection
         return function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('email')->unique();
+            $table->string('password');
         };
     }
 

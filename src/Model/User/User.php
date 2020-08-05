@@ -29,7 +29,7 @@ final class User implements AggregateRoot
     public function apply(UserRegistered $event): void
     {
         $this->email = $event->email();
-        $this->password = $event->encodedPassword();
+        $this->password = $event->password();
     }
 
     /**

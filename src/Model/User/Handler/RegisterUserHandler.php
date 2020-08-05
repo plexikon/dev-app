@@ -6,7 +6,7 @@ namespace Plexikon\DevApp\Model\User\Handler;
 use Plexikon\DevApp\Infrastructure\Service\BcryptPasswordEncoder;
 use Plexikon\DevApp\Model\User\Command\RegisterUser;
 use Plexikon\DevApp\Model\User\Exception\UserAlreadyExists;
-use Plexikon\DevApp\Model\User\Repository\PasswordEncoder;
+use Plexikon\DevApp\Model\User\Service\PasswordEncoder;
 use Plexikon\DevApp\Model\User\Repository\UserCollection;
 use Plexikon\DevApp\Model\User\Service\UniqueEmail;
 use Plexikon\DevApp\Model\User\User;

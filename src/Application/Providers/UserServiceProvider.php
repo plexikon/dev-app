@@ -10,7 +10,7 @@ use Plexikon\Chronicle\ChronicleRepositoryManager;
 use Plexikon\DevApp\Infrastructure\Repository\ChronicleUserCollection;
 use Plexikon\DevApp\Infrastructure\Service\BcryptPasswordEncoder;
 use Plexikon\DevApp\Infrastructure\Service\UniqueEmailFromRead;
-use Plexikon\DevApp\Model\User\Repository\PasswordEncoder;
+use Plexikon\DevApp\Model\User\Service\PasswordEncoder;
 use Plexikon\DevApp\Model\User\Repository\UserCollection;
 use Plexikon\DevApp\Model\User\Service\UniqueEmail;
 use Plexikon\DevApp\Projection\Stream;
