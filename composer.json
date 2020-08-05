@@ -1,0 +1,53 @@
+{
+    "name": "plexikon/dev-app",
+    "description": "shared component",
+    "keywords": [],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "steph bug",
+            "email": "plexikon@protonmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4",
+        "plexikon/chronicle": "dev-develop"
+    },
+    "require-dev": {
+        "laravel/framework": "^7.2",
+        "beberlei/assert": "^3.2",
+        "marc-mabe/php-enum": "^4.2",
+        "ramsey/uuid": "^3.9",
+        "react/promise": "^2.7",
+        "ext-json": "*",
+        "nunomaduro/larastan": "^0.5.3",
+        "orchestra/testbench": "^5.1",
+        "phpstan/phpstan": "^0.12",
+        "phpunit/phpunit": "^8.5",
+        "roave/security-advisories": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/plexikon/chronicle"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Plexikon\\DevApp\\": "src"
+        }
+    },
+    "autoload-dev": {},
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "dont-discover": []
+        }
+    }
+}
