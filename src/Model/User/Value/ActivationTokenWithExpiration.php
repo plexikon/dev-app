@@ -25,11 +25,9 @@ final class ActivationTokenWithExpiration implements Value
 
     public static function create(): self
     {
-        $now = new DateTimeImmutable('now', new DateTimeZone(self::EXPIRED_AT_TIMEZONE));
-
         return new self(
             ActivationToken::create(),
-            $now->add(new DateInterval(self::EXPIRED_AT_INTERVAL))
+            self::now()->add(new DateInterval(self::EXPIRED_AT_INTERVAL))
         );
     }
 
@@ -47,6 +45,11 @@ final class ActivationTokenWithExpiration implements Value
         return new self(ActivationToken::fromString($token), $expiredAt);
     }
 
+    private static function now(): DateTimeImmutable
+    {
+        return new DateTimeImmutable('now', new DateTimeZone(self::EXPIRED_AT_TIMEZONE));
+    }
+
     public function sameValueAs(Value $aValue): bool
     {
         return $aValue instanceof $this
@@ -56,9 +59,7 @@ final class ActivationTokenWithExpiration implements Value
 
     public function isExpired(): bool
     {
-        $now = new DateTimeImmutable('now', new DateTimeZone(self::EXPIRED_AT_TIMEZONE));
-
-        return ($now->add(new DateInterval(self::EXPIRED_AT_INTERVAL))) < $this->expiredAt;
+        return self::now()->add(new DateInterval(self::EXPIRED_AT_INTERVAL)) < $this->expiredAt;
     }
 
     public function isNotExpired(): bool

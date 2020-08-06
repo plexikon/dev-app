@@ -18,7 +18,7 @@ final class GetUserByActivationTokenHandler
 
     public function query(GetUserByActivationToken $query, Deferred $promise): void
     {
-        $user = $this->userFinder->userOfActivationToken($query->token()->toString());
+        $user = $this->userFinder->userOfValidActivationToken($query->token()->toString());
 
         $promise->resolve($user);
     }

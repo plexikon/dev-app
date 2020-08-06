@@ -11,6 +11,7 @@ use Plexikon\DevApp\Model\User\Query\GetUserByActivationToken;
 use Plexikon\DevApp\Model\User\Value\ActivationToken;
 use Plexikon\DevApp\Model\User\Value\ActivationTokenWithExpiration;
 use Plexikon\DevApp\Model\User\Value\UserId;
+use Plexikon\DevApp\Projection\User\UserActivationModel;
 use Plexikon\DevApp\Projection\User\UserModel;
 
 final class ActivateUserCommand extends Command
@@ -26,23 +27,26 @@ final class ActivateUserCommand extends Command
 
         $user = $this->queryUser(ActivationToken::fromString($this->argument('activation_token')));
 
-        $token = $user->activation->token();
-        $this->activateUser($user->getId(), $token);
+        $token = $user->token();
 
-        $this->info("User with id {$user->getId()->toString()} activated with token {$token->token()->toString()}");
+        $this->activateUser($user->getUserId(), $token);
+
+        $this->info("User with id {$user->getUserId()->toString()} activated with token {$token->token()->toString()}");
     }
 
-    private function queryUser(ActivationToken $token): UserModel
+    private function queryUser(ActivationToken $token): UserActivationModel
     {
-        $user = $this->reporter->handlePromise($this->reporter->publishQuery(
-            new GetUserByActivationToken($token->toString())
-        ));
+        $query = new GetUserByActivationToken($token->toString());
 
-        if (null === $user || null === $user->activation) {
+        $user = $this->reporter->handlePromise(
+            $this->reporter->publishQuery($query)
+        );
+
+        if (!$user instanceof UserModel || !$user->activation instanceof UserActivationModel) {
             throw new UserNotFound("User/Token not found");
         }
 
-        return $user;
+        return $user->activation;
     }
 
     private function activateUser(UserId $userId, ActivationTokenWithExpiration $token): void

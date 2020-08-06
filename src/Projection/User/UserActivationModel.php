@@ -14,9 +14,9 @@ final class UserActivationModel extends Model
     protected $fillable = [];
     protected $guarded = ['*'];
 
-    public function getId(): UserId
+    public function getUserId(): UserId
     {
-        return UserId::fromString($this->getKey());
+        return UserId::fromString($this['user_id']);
     }
 
     public function token(): ActivationTokenWithExpiration

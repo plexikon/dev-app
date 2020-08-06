@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 namespace Plexikon\DevApp\Projection\User;
 
+use DateTimeImmutable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Plexikon\Chronicle\Clock\SystemClock;
+use Plexikon\DevApp\Model\User\Value\ActivationTokenWithExpiration;
 
 final class UserFinder
 {
@@ -43,13 +46,15 @@ final class UserFinder
      * @param string $activationToken
      * @return UserModel|Model|null
      */
-    public function userOfActivationToken(string $activationToken): ?UserModel
+    public function userOfValidActivationToken(string $activationToken): ?UserModel
     {
+        $now = (new SystemClock())->pointInTime()->toString();
+
         return $this->model
             ->newQuery()
-            ->whereHas('activation', function (Builder $builder) use ($activationToken): void {
+            ->whereHas('activation', function (Builder $builder) use ($activationToken, $now): void {
                 $builder->where('token', $activationToken);
-                // todo add expiration date
+                $builder->where('expired_at', '>', $now);
             })
             ->first();
     }
