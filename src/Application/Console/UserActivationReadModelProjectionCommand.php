@@ -18,11 +18,11 @@ final class UserActivationReadModelProjectionCommand extends AbstractPersistentP
         $projection
             ->withQueryFilter($this->projectorManager()->projectionQueryScope()->fromIncludedPosition())
             ->fromStreams(Stream::USER_STREAM)
-            ->when($this->fromUserHandlers())
+            ->when($this->fromUserActivationHandlers())
             ->run(true);
     }
 
-    private function fromUserHandlers(): array
+    private function fromUserActivationHandlers(): array
     {
         return [
             'activation-token-requested' => function (array $state, ActivationTokenRequested $event): void {

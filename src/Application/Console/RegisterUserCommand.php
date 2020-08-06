@@ -11,7 +11,7 @@ final class RegisterUserCommand extends Command
 {
     protected $signature = 'app:register_user {user_id} {user_email} {user_password}';
 
-    public function handle()
+    public function handle(): void
     {
         /** @var LazyReporter $reporter */
         $reporter = $this->getLaravel()->get(LazyReporter::class);
