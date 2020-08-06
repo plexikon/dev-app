@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Plexikon\DevApp\Model\User\Value\BcryptPassword;
 use Plexikon\DevApp\Model\User\Value\EmailAddress;
 use Plexikon\DevApp\Model\User\Value\UserId;
+use Plexikon\DevApp\Model\User\Value\UserStatus;
 use Plexikon\DevApp\Projection\Table;
 
 final class UserModel extends Model
@@ -38,5 +39,15 @@ final class UserModel extends Model
     public function password(): BcryptPassword
     {
         return BcryptPassword::fromString($this['password']);
+    }
+
+    public function status(): UserStatus
+    {
+        return UserStatus::byValue($this['status']);
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->status()->sameValueAs(UserStatus::ACTIVATED());
     }
 }

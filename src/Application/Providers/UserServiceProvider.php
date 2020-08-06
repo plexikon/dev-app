@@ -11,7 +11,9 @@ use Plexikon\Chronicle\ChronicleRepositoryManager;
 use Plexikon\Chronicle\Support\Contract\Chronicling\Chronicler;
 use Plexikon\DevApp\Application\Console\ActivateUserCommand;
 use Plexikon\DevApp\Application\Console\ActivateUsersCommand;
+use Plexikon\DevApp\Application\Console\ChangeAndResetUsersPasswordCommand;
 use Plexikon\DevApp\Application\Console\ChangeUserEmailCommand;
+use Plexikon\DevApp\Application\Console\ChangeUserPasswordCommand;
 use Plexikon\DevApp\Application\Console\RegisterUserCommand;
 use Plexikon\DevApp\Application\Console\SeedUsersCommand;
 use Plexikon\DevApp\Application\Console\UserActivationReadModelProjectionCommand;
@@ -117,6 +119,8 @@ class UserServiceProvider extends ServiceProvider implements DeferrableProvider
             $this->commands([
                 RegisterUserCommand::class,
                 ChangeUserEmailCommand::class,
+                ChangeUserPasswordCommand::class,
+                ChangeAndResetUsersPasswordCommand::class,
                 ActivateUserCommand::class,
                 ActivateUsersCommand::class,
                 SeedUsersCommand::class,

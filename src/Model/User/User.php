@@ -13,6 +13,7 @@ use Plexikon\DevApp\Model\User\Event\UserPasswordChanged;
 use Plexikon\DevApp\Model\User\Event\UserRegistered;
 use Plexikon\DevApp\Model\User\Exception\InvalidActivationToken;
 use Plexikon\DevApp\Model\User\Exception\UserAlreadyActivated;
+use Plexikon\DevApp\Model\User\Exception\UserNotActivated;
 use Plexikon\DevApp\Model\User\Exception\UserNotFound;
 use Plexikon\DevApp\Model\User\Value\ActivationTokenWithExpiration;
 use Plexikon\DevApp\Model\User\Value\BcryptPassword;
@@ -48,6 +49,10 @@ final class User implements AggregateRoot
 
     public function changePassword(BcryptPassword $password): void
     {
+        if ($this->isNotEnabled()) {
+            throw UserNotActivated::withUserId($this->userId());
+        }
+
         $this->recordThat(UserPasswordChanged::withData($this->userId(), $password, $this->password));
     }
 
@@ -74,7 +79,7 @@ final class User implements AggregateRoot
             throw UserAlreadyActivated::withUserId($this->userId());
         }
 
-        if(!$this->activationToken || $this->activationToken->sameValueAs($activationToken)){
+        if (!$this->activationToken || $this->activationToken->sameValueAs($activationToken)) {
             throw new UserNotFound("Invalid user given with activation token"); //checkMe
         }
 
