@@ -55,7 +55,7 @@ class UserServiceProvider extends ServiceProvider implements DeferrableProvider
             'get-user-by-id' => GetUserByIdHandler::class,
             'get-user-by-email' => GetUserByEmailHandler::class,
             'paginate-users' => PaginateUsersHandler::class,
-            'get-user-of-activation-token' => GetUserByActivationTokenHandler::class
+            'get-user-by-activation-token' => GetUserByActivationTokenHandler::class
         ],
 
         'event' => [

@@ -35,13 +35,16 @@ final class ActivationTokenWithExpiration implements Value
 
     public static function fromString(string $token, string $expiredAt): self
     {
-        return new self(
-            ActivationToken::fromString($token),
-            DateTimeImmutable::createFromFormat(
-                self::EXPIRED_AT_FORMAT, $expiredAt,
-                new DateTimeZone(self::EXPIRED_AT_TIMEZONE)
-            )
+        $expiredAt = DateTimeImmutable::createFromFormat(
+            self::EXPIRED_AT_FORMAT, $expiredAt,
+            new DateTimeZone(self::EXPIRED_AT_TIMEZONE)
         );
+
+        if (!$expiredAt instanceof DateTimeImmutable) {
+
+        }
+
+        return new self(ActivationToken::fromString($token), $expiredAt);
     }
 
     public function sameValueAs(Value $aValue): bool

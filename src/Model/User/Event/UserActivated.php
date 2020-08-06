@@ -21,7 +21,9 @@ final class UserActivated extends AggregateChanged
     {
         $self = self::occur($userId->toString(), [
             'activation_token' => $activationToken->token()->toString(),
-            'token_expired_at' => $activationToken->formatExpiredAt()
+            'token_expired_at' => $activationToken->formatExpiredAt(),
+            'current_user_status' => $currentUserStatus->getValue(),
+            'old_user_status' => $oldUserStatus->getValue(),
         ]);
 
         $self->activationToken = $activationToken;

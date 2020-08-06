@@ -5,7 +5,7 @@ namespace Plexikon\DevApp\Application\Console;
 
 use Plexikon\Chronicle\Support\Console\AbstractPersistentProjectionCommand;
 use Plexikon\DevApp\Model\User\Event\ActivationTokenRequested;
-use Plexikon\DevApp\Model\User\Event\UserRegistered;
+use Plexikon\DevApp\Model\User\Event\UserActivated;
 use Plexikon\DevApp\Projection\Stream;
 use Plexikon\DevApp\Projection\User\UserActivationReadModel;
 
@@ -34,8 +34,8 @@ final class UserActivationReadModelProjectionCommand extends AbstractPersistentP
                 ]);
             },
 
-            'user-activated' => function (array $state, UserRegistered $event): void {
-                $this->readModel()->stack('deleteOnUserRegistered', $event->aggregateRootId());
+            'user-activated' => function (array $state, UserActivated $event): void {
+                $this->readModel()->stack('deleteOnUserActivated', $event->aggregateRootId());
             }
         ];
     }

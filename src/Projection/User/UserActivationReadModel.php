@@ -13,9 +13,9 @@ final class UserActivationReadModel extends ReadModelConnection
 {
     use HasConnectionOperation;
 
-    protected function deleteOnUserRegistered(string $userId): void
+    protected function deleteOnUserActivated(string $userId): void
     {
-        $this->queryBuilder()->delete($userId);
+        $this->queryBuilder()->where('user_id', $userId)->delete();
     }
 
     protected function tableName(): string
@@ -26,10 +26,10 @@ final class UserActivationReadModel extends ReadModelConnection
     protected function up(): callable
     {
         return function (Blueprint $table): void {
-            $table->id('id')->primary();
+            $table->id('id');
             $table->uuid('user_id')->unique();
             $table->char('token', ActivationToken::LENGTH)->unique();
-            $table->timestampTz('expired_at');
+            $table->string('expired_at', 26);
         };
     }
 }

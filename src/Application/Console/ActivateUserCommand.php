@@ -26,7 +26,7 @@ final class ActivateUserCommand extends Command
 
         $user = $this->queryUser(ActivationToken::fromString($this->argument('activation_token')));
 
-        $token = $user->getRelation('activation')->token();
+        $token = $user->activation->token();
         $this->activateUser($user->getId(), $token);
 
         $this->info("User with id {$user->getId()->toString()} activated with token {$token->token()->toString()}");
@@ -38,7 +38,7 @@ final class ActivateUserCommand extends Command
             new GetUserByActivationToken($token->toString())
         ));
 
-        if (null === $user) {
+        if (null === $user || null === $user->activation) {
             throw new UserNotFound("User/Token not found");
         }
 

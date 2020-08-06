@@ -13,19 +13,12 @@ final class ActivateUsersCommand extends Command
     public function handle(): void
     {
         // for simplicity
-        $users = UserModel::has('activation')->get()->filter(function (UserModel $user): bool {
-            return $user->activation->token()->isNotExpired();
+        $users = UserModel::has('activation')->get()->each(function (UserModel $user): void {
+            $this->call('app:activate_user',
+                ['activation_token' => $user->activation->token]
+            );
         });
 
-        if ($users->empty()) {
-            $this->warn('No user to activate');
-            return;
-        }
-
-        $users->each(function (UserModel $user): void {
-            $this->call('app:activate_user', ['user_id' => $user->getId()->toString()]);
-        });
-
-        $this->info("{$users->count()} users registered");
+        $this->info("{$users->count()} users activated");
     }
 }

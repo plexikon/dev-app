@@ -22,7 +22,7 @@ final class UserModel extends Model
      */
     public function activation(): HasOne
     {
-        return $this->hasOne(UserActivationModel::class, 'user_id', ' id');
+        return $this->hasOne(UserActivationModel::class, 'user_id', 'id');
     }
 
     public function getId(): UserId
