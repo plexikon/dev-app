@@ -55,7 +55,12 @@ final class ActivationTokenWithExpiration implements Value
     {
         $now = new DateTimeImmutable('now', new DateTimeZone(self::EXPIRED_AT_TIMEZONE));
 
-        return ($now->add(new DateInterval(self::EXPIRED_AT_INTERVAL))) > $this->expiredAt;
+        return ($now->add(new DateInterval(self::EXPIRED_AT_INTERVAL))) < $this->expiredAt;
+    }
+
+    public function isNotExpired(): bool
+    {
+        return !$this->isExpired();
     }
 
     public function token(): ActivationToken

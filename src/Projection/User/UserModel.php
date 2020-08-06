@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Plexikon\DevApp\Projection\User;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Plexikon\DevApp\Model\User\Value\BcryptPassword;
 use Plexikon\DevApp\Model\User\Value\EmailAddress;
 use Plexikon\DevApp\Model\User\Value\UserId;
@@ -15,6 +16,14 @@ final class UserModel extends Model
     protected $fillable = [];
     protected $guarded = ['*'];
     protected $keyType = 'string';
+
+    /**
+     * @return HasOne|UserActivationModel
+     */
+    public function activation(): HasOne
+    {
+        return $this->hasOne(UserActivationModel::class, 'id', ' id');
+    }
 
     public function getId(): UserId
     {

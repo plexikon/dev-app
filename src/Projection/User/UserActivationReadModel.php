@@ -13,6 +13,11 @@ final class UserActivationReadModel extends ReadModelConnection
 {
     use HasConnectionOperation;
 
+    protected function deleteOnUserRegistered(string $userId): void
+    {
+        $this->queryBuilder()->delete($userId);
+    }
+
     protected function tableName(): string
     {
         return Table::USER_ACTIVATION_TABLE;

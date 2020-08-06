@@ -8,14 +8,16 @@ use Plexikon\DevApp\Model\User\Value\ActivationTokenWithExpiration;
 use Plexikon\DevApp\Model\User\Value\UserId;
 use Plexikon\DevApp\Model\User\Value\UserStatus;
 
-final class ActivationTokenRequested extends AggregateChanged
+final class UserActivated extends AggregateChanged
 {
     private ?ActivationTokenWithExpiration $activationToken;
-    private ?UserStatus $userStatus;
+    private ?UserStatus $currentUserStatus;
+    private ?UserStatus $oldUserStatus;
 
     public static function forUser(UserId $userId,
                                    ActivationTokenWithExpiration $activationToken,
-                                   UserStatus $userStatus): self
+                                   UserStatus $currentUserStatus,
+                                   UserStatus $oldUserStatus): self
     {
         $self = self::occur($userId->toString(), [
             'activation_token' => $activationToken->token()->toString(),
@@ -23,7 +25,8 @@ final class ActivationTokenRequested extends AggregateChanged
         ]);
 
         $self->activationToken = $activationToken;
-        $self->userStatus = $userStatus;
+        $self->currentUserStatus = $currentUserStatus;
+        $self->oldUserStatus = $oldUserStatus;
 
         return $self;
     }
@@ -39,5 +42,15 @@ final class ActivationTokenRequested extends AggregateChanged
                 $this->payload['activation_token'],
                 $this->payload['token_expired_at']
             );
+    }
+
+    public function currentUserStatus(): UserStatus
+    {
+        return $this->currentUserStatus ?? UserStatus::byValue($this->payload['current_user_status']);
+    }
+
+    public function oldUserStatus(): UserStatus
+    {
+        return $this->oldUserStatus ?? UserStatus::byValue($this->payload['old_user_status']);
     }
 }

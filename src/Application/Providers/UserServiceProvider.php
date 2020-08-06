@@ -12,12 +12,15 @@ use Plexikon\Chronicle\Support\Contract\Chronicling\Chronicler;
 use Plexikon\DevApp\Application\Console\ChangeUserEmailCommand;
 use Plexikon\DevApp\Application\Console\RegisterUserCommand;
 use Plexikon\DevApp\Application\Console\SeedUsersCommand;
+use Plexikon\DevApp\Application\Console\UserActivationReadModelProjectionCommand;
 use Plexikon\DevApp\Application\Console\UserReadModelProjectionCommand;
 use Plexikon\DevApp\Infrastructure\Repository\ChronicleUserCollection;
 use Plexikon\DevApp\Infrastructure\Service\BcryptPasswordEncoder;
 use Plexikon\DevApp\Infrastructure\Service\UniqueEmailFromRead;
+use Plexikon\DevApp\Model\User\Handler\ActivateUserHandler;
 use Plexikon\DevApp\Model\User\Handler\ChangeUserEmailHandler;
 use Plexikon\DevApp\Model\User\Handler\ChangeUserPasswordHandler;
+use Plexikon\DevApp\Model\User\Handler\GetUserByActivationTokenHandler;
 use Plexikon\DevApp\Model\User\Handler\GetUserByEmailHandler;
 use Plexikon\DevApp\Model\User\Handler\GetUserByIdHandler;
 use Plexikon\DevApp\Model\User\Handler\PaginateUsersHandler;
@@ -43,12 +46,14 @@ class UserServiceProvider extends ServiceProvider implements DeferrableProvider
             'change-user-email' => ChangeUserEmailHandler::class,
             'change-user-password' => ChangeUserPasswordHandler::class,
             'request-activation-token' => RequestActivationTokenHandler::class,
+            'activate-user' => ActivateUserHandler::class,
         ],
 
         'query' => [
             'get-user-by-id' => GetUserByIdHandler::class,
             'get-user-by-email' => GetUserByEmailHandler::class,
             'paginate-users' => PaginateUsersHandler::class,
+            'get-user-of-activation-token' => GetUserByActivationTokenHandler::class
         ],
 
         'event' => [
@@ -61,6 +66,7 @@ class UserServiceProvider extends ServiceProvider implements DeferrableProvider
                 // differ from renewActivationToken
                 // send welcome email with activation token
             ],
+            'user-activated' => []
         ]
     ];
 
@@ -110,7 +116,8 @@ class UserServiceProvider extends ServiceProvider implements DeferrableProvider
                 RegisterUserCommand::class,
                 ChangeUserEmailCommand::class,
                 SeedUsersCommand::class,
-                UserReadModelProjectionCommand::class
+                UserReadModelProjectionCommand::class,
+                UserActivationReadModelProjectionCommand::class,
             ]);
         }
     }

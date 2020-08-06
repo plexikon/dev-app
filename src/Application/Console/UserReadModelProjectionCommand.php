@@ -5,6 +5,7 @@ namespace Plexikon\DevApp\Application\Console;
 
 use Plexikon\Chronicle\Support\Console\AbstractPersistentProjectionCommand;
 use Plexikon\Chronicle\Support\Contract\Messaging\MessageHeader;
+use Plexikon\DevApp\Model\User\Event\UserActivated;
 use Plexikon\DevApp\Model\User\Event\UserEmailChanged;
 use Plexikon\DevApp\Model\User\Event\UserPasswordChanged;
 use Plexikon\DevApp\Model\User\Event\UserRegistered;
@@ -13,13 +14,13 @@ use Plexikon\DevApp\Projection\User\UserReadModel;
 
 final class UserReadModelProjectionCommand extends AbstractPersistentProjectionCommand
 {
-    protected $signature = 'app:project-user_stream';
+    protected $signature = 'app:project-user';
 
     public function handle(): void
     {
         $projection = $this->withProjection(Stream::USER_STREAM, UserReadModel::class);
         $projection
-            ->initialize(fn(): array => ['count' => 0])
+            ->initialize(fn(): array => ['pending' => 0, 'activated' => 0])
             ->withQueryFilter($this->projectorManager()->projectionQueryScope()->fromIncludedPosition())
             ->fromStreams(Stream::USER_STREAM)
             ->when($this->fromUserHandlers())
@@ -38,7 +39,7 @@ final class UserReadModelProjectionCommand extends AbstractPersistentProjectionC
                     'created_at' => $event->header(MessageHeader::TIME_OF_RECORDING)
                 ]);
 
-                $state['count']++;
+                $state['pending']++;
                 return $state;
             },
 
@@ -54,6 +55,17 @@ final class UserReadModelProjectionCommand extends AbstractPersistentProjectionC
                     'password' => $event->currentPassword()->toString(),
                     'updated_at' => $event->header(MessageHeader::TIME_OF_RECORDING)
                 ]);
+            },
+
+            'user-activated' => function (array $state, UserActivated $event): array {
+                $this->readModel()->stack('update', $event->aggregateRootId(),[
+                    'status' => $event->currentUserStatus()->getValue()
+                ]);
+
+                $state['pending']--;
+                $state['activated']++;
+
+                return $state;
             }
         ];
     }

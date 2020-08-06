@@ -6,11 +6,14 @@ namespace Plexikon\DevApp\Model\User;
 use Plexikon\Chronicle\Chronicling\Aggregate\Concerns\HasAggregateRoot;
 use Plexikon\Chronicle\Support\Contract\Chronicling\Aggregate\AggregateId;
 use Plexikon\Chronicle\Support\Contract\Chronicling\Aggregate\AggregateRoot;
+use Plexikon\DevApp\Model\User\Event\ActivationTokenRequested;
+use Plexikon\DevApp\Model\User\Event\UserActivated;
 use Plexikon\DevApp\Model\User\Event\UserEmailChanged;
 use Plexikon\DevApp\Model\User\Event\UserPasswordChanged;
 use Plexikon\DevApp\Model\User\Event\UserRegistered;
 use Plexikon\DevApp\Model\User\Exception\InvalidActivationToken;
 use Plexikon\DevApp\Model\User\Exception\UserAlreadyActivated;
+use Plexikon\DevApp\Model\User\Exception\UserNotFound;
 use Plexikon\DevApp\Model\User\Value\ActivationTokenWithExpiration;
 use Plexikon\DevApp\Model\User\Value\BcryptPassword;
 use Plexikon\DevApp\Model\User\Value\EmailAddress;
@@ -24,7 +27,7 @@ final class User implements AggregateRoot
     private EmailAddress $email;
     private BcryptPassword $password;
     private UserStatus $status;
-    private ActivationTokenWithExpiration $activationToken;
+    private ?ActivationTokenWithExpiration $activationToken = null;
 
     public static function register(UserId $userId, EmailAddress $email, BcryptPassword $password): self
     {
@@ -58,11 +61,30 @@ final class User implements AggregateRoot
             throw InvalidActivationToken::invalid($this->userId(), $activationToken);
         }
 
-        if ($activationToken->sameValueAs($this->activationToken)) {
+        if ($this->activationToken && $activationToken->sameValueAs($this->activationToken)) {
             return;
         }
 
+        $this->recordThat(ActivationTokenRequested::forUser($this->userId(), $activationToken, $this->status));
+    }
 
+    public function activateUser(ActivationTokenWithExpiration $activationToken): void
+    {
+        if ($this->isEnabled()) {
+            throw UserAlreadyActivated::withUserId($this->userId());
+        }
+
+        if(!$this->activationToken || $this->activationToken->sameValueAs($activationToken)){
+            throw new UserNotFound("Invalid user given with activation token"); //checkMe
+        }
+
+        if ($activationToken->isExpired()) {
+            throw InvalidActivationToken::invalid($this->userId(), $activationToken);
+        }
+
+        $this->recordThat(
+            UserActivated::forUser($this->userId(), $activationToken, UserStatus::ACTIVATED(), $this->status)
+        );
     }
 
     public function isEnabled(): bool
@@ -92,6 +114,17 @@ final class User implements AggregateRoot
         $this->password = $event->currentPassword();
     }
 
+    public function applyActivationTokenRequested(ActivationTokenRequested $event): void
+    {
+        $this->activationToken = $event->activationToken();
+    }
+
+    public function applyUserActivated(UserActivated $event): void
+    {
+        $this->activationToken = null;
+        $this->status = $event->currentUserStatus();
+    }
+
     /**
      * @return UserId|AggregateId
      */
@@ -113,5 +146,10 @@ final class User implements AggregateRoot
     public function status(): UserStatus
     {
         return $this->status;
+    }
+
+    public function activationToken(): ?ActivationTokenWithExpiration
+    {
+        return $this->activationToken;
     }
 }

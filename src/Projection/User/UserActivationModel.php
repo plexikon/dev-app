@@ -20,13 +20,9 @@ final class UserActivationModel extends Model
         return UserId::fromString($this->getKey());
     }
 
-    public function activationToken(): ?ActivationTokenWithExpiration
+    public function token(): ActivationTokenWithExpiration
     {
-        if (null === $this['token'] && null === $this['expired_at']) {
-            return null;
-        }
-
-        return ActivationTokenWithExpiration::fromString(
+       return ActivationTokenWithExpiration::fromString(
             $this['token'], $this['expired_at']
         );
     }

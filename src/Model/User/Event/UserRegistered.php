@@ -47,6 +47,6 @@ final class UserRegistered extends AggregateChanged
 
     public function userStatus(): UserStatus
     {
-        return $this->userStatus ?? UserStatus::byValue($this->password['status']);
+        return $this->userStatus ?? UserStatus::byValue($this->payload['status']);
     }
 }

@@ -5,12 +5,13 @@ namespace Plexikon\DevApp\Application\Console;
 
 use Plexikon\Chronicle\Support\Console\AbstractPersistentProjectionCommand;
 use Plexikon\DevApp\Model\User\Event\ActivationTokenRequested;
+use Plexikon\DevApp\Model\User\Event\UserRegistered;
 use Plexikon\DevApp\Projection\Stream;
 use Plexikon\DevApp\Projection\User\UserActivationReadModel;
 
 final class UserActivationReadModelProjectionCommand extends AbstractPersistentProjectionCommand
 {
-    protected $signature = 'app:project-user_stream';
+    protected $signature = 'app:project-user_activation';
 
     public function handle(): void
     {
@@ -32,6 +33,10 @@ final class UserActivationReadModelProjectionCommand extends AbstractPersistentP
                     'expired_at' => $event->activationToken()->formatExpiredAt()
                 ]);
             },
+
+            'user-activated' => function (array $state, UserRegistered $event): void {
+                $this->readModel()->stack('deleteOnUserRegistered', $event->aggregateRootId());
+            }
         ];
     }
 }
