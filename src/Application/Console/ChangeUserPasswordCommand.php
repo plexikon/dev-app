@@ -9,7 +9,11 @@ use Plexikon\DevApp\Model\User\Command\ChangeUserPassword;
 
 final class ChangeUserPasswordCommand extends Command
 {
-    protected $signature = 'app:change_user_password {user_id} {current_password} {new_password} {new_password_confirmed}';
+    protected $signature = 'app:change_user_password
+                                {user_id}
+                                {current_password}
+                                {new_password}
+                                {new_password_confirmed}';
 
     public function handle(): void
     {
@@ -24,6 +28,6 @@ final class ChangeUserPasswordCommand extends Command
             )
         );
 
-        $this->info("User email changed");
+        $this->info("User password changed");
     }
 }

@@ -6,7 +6,6 @@ namespace Plexikon\DevApp\Application\Console;
 use Faker\Factory;
 use Illuminate\Console\Command;
 use Plexikon\DevApp\Model\User\Exception\UserAlreadyExists;
-use Plexikon\DevApp\Model\User\Value\ClearPassword;
 
 final class SeedUsersCommand extends Command
 {
@@ -23,7 +22,7 @@ final class SeedUsersCommand extends Command
                 $this->callSilent('app:register_user', [
                     'user_id' => $userId = $faker->uuid,
                     'user_email' => $faker->email,
-                    'user_password' => $faker->password(ClearPassword::MIN_LENGTH, ClearPassword::MAX_LENGTH),
+                    'user_password' => 'password123',
                 ]);
 
                 --$num;
