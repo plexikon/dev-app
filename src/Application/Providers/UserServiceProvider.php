@@ -9,6 +9,8 @@ use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 use Plexikon\Chronicle\ChronicleRepositoryManager;
 use Plexikon\Chronicle\Support\Contract\Chronicling\Chronicler;
+use Plexikon\DevApp\Application\Console\ActivateUserCommand;
+use Plexikon\DevApp\Application\Console\ActivateUsersCommand;
 use Plexikon\DevApp\Application\Console\ChangeUserEmailCommand;
 use Plexikon\DevApp\Application\Console\RegisterUserCommand;
 use Plexikon\DevApp\Application\Console\SeedUsersCommand;
@@ -115,7 +117,10 @@ class UserServiceProvider extends ServiceProvider implements DeferrableProvider
             $this->commands([
                 RegisterUserCommand::class,
                 ChangeUserEmailCommand::class,
+                ActivateUserCommand::class,
+                ActivateUsersCommand::class,
                 SeedUsersCommand::class,
+
                 UserReadModelProjectionCommand::class,
                 UserActivationReadModelProjectionCommand::class,
             ]);

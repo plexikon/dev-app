@@ -26,7 +26,7 @@ final class ActivateUserCommand extends Command
 
         $user = $this->queryUser(ActivationToken::fromString($this->argument('activation_token')));
 
-        $token = $user->activation()->token();
+        $token = $user->getRelation('activation')->token();
         $this->activateUser($user->getId(), $token);
 
         $this->info("User with id {$user->getId()->toString()} activated with token {$token->token()->toString()}");

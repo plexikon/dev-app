@@ -26,7 +26,8 @@ final class UserActivationReadModel extends ReadModelConnection
     protected function up(): callable
     {
         return function (Blueprint $table): void {
-            $table->uuid('id')->primary();
+            $table->id('id')->primary();
+            $table->uuid('user_id')->unique();
             $table->char('token', ActivationToken::LENGTH)->unique();
             $table->timestampTz('expired_at');
         };

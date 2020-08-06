@@ -13,7 +13,6 @@ final class UserActivationModel extends Model
     protected $table = Table::USER_ACTIVATION_TABLE;
     protected $fillable = [];
     protected $guarded = ['*'];
-    protected $keyType = 'string';
 
     public function getId(): UserId
     {
