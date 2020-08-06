@@ -6,6 +6,7 @@ namespace Plexikon\DevApp\Application\Console;
 use Plexikon\Chronicle\Support\Console\AbstractPersistentProjectionCommand;
 use Plexikon\Chronicle\Support\Contract\Messaging\MessageHeader;
 use Plexikon\DevApp\Model\User\Event\UserEmailChanged;
+use Plexikon\DevApp\Model\User\Event\UserPasswordChanged;
 use Plexikon\DevApp\Model\User\Event\UserRegistered;
 use Plexikon\DevApp\Projection\Stream;
 use Plexikon\DevApp\Projection\User\UserReadModel;
@@ -33,6 +34,7 @@ final class UserReadModelProjectionCommand extends AbstractPersistentProjectionC
                     'id' => $event->aggregateRootId(),
                     'email' => $event->email()->toString(),
                     'password' => $event->password()->toString(),
+                    'status' => $event->userStatus()->getValue(),
                     'created_at' => $event->header(MessageHeader::TIME_OF_RECORDING)
                 ]);
 
@@ -42,7 +44,15 @@ final class UserReadModelProjectionCommand extends AbstractPersistentProjectionC
 
             'user-email-changed' => function (array $state, UserEmailChanged $event): void {
                 $this->readModel()->stack('update', $event->aggregateRootId(), [
-                    'email' => $event->currentEmail()->toString()
+                    'email' => $event->currentEmail()->toString(),
+                    'updated_at' => $event->header(MessageHeader::TIME_OF_RECORDING)
+                ]);
+            },
+
+            'user-password-changed' => function (array $state, UserPasswordChanged $event): void {
+                $this->readModel()->stack('update', $event->aggregateRootId(), [
+                    'password' => $event->currentPassword()->toString(),
+                    'updated_at' => $event->header(MessageHeader::TIME_OF_RECORDING)
                 ]);
             }
         ];

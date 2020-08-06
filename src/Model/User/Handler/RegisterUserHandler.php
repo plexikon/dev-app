@@ -44,7 +44,7 @@ final class RegisterUserHandler
             throw UserAlreadyExists::withEmail($email);
         }
 
-        $encodedPassword = ($this->passwordEncoder)($command->clearPassword());
+        $encodedPassword = $this->passwordEncoder->encode($command->clearPassword());
 
         $user = User::register($userId, $email, $encodedPassword);
 

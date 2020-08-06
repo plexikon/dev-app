@@ -17,14 +17,17 @@ use Plexikon\DevApp\Infrastructure\Repository\ChronicleUserCollection;
 use Plexikon\DevApp\Infrastructure\Service\BcryptPasswordEncoder;
 use Plexikon\DevApp\Infrastructure\Service\UniqueEmailFromRead;
 use Plexikon\DevApp\Model\User\Handler\ChangeUserEmailHandler;
+use Plexikon\DevApp\Model\User\Handler\ChangeUserPasswordHandler;
 use Plexikon\DevApp\Model\User\Handler\GetUserByEmailHandler;
 use Plexikon\DevApp\Model\User\Handler\GetUserByIdHandler;
 use Plexikon\DevApp\Model\User\Handler\PaginateUsersHandler;
 use Plexikon\DevApp\Model\User\Handler\RegisterUserHandler;
+use Plexikon\DevApp\Model\User\Handler\RequestActivationTokenHandler;
 use Plexikon\DevApp\Model\User\Repository\UserCollection;
 use Plexikon\DevApp\Model\User\Service\PasswordEncoder;
 use Plexikon\DevApp\Model\User\Service\UniqueEmail;
 use Plexikon\DevApp\Model\User\User;
+use Plexikon\DevApp\ProcessManager\OnUserRegistrationProcess;
 use Plexikon\DevApp\Projection\Stream;
 
 class UserServiceProvider extends ServiceProvider implements DeferrableProvider
@@ -38,6 +41,8 @@ class UserServiceProvider extends ServiceProvider implements DeferrableProvider
         'command' => [
             'register-user' => RegisterUserHandler::class,
             'change-user-email' => ChangeUserEmailHandler::class,
+            'change-user-password' => ChangeUserPasswordHandler::class,
+            'request-activation-token' => RequestActivationTokenHandler::class,
         ],
 
         'query' => [
@@ -47,8 +52,15 @@ class UserServiceProvider extends ServiceProvider implements DeferrableProvider
         ],
 
         'event' => [
-            'user-registered' => [],
+            'user-registered' => [
+                OnUserRegistrationProcess::class
+            ],
             'user-email-changed' => [],
+            'user-password-changed' => [],
+            'activation-token-requested' => [
+                // differ from renewActivationToken
+                // send welcome email with activation token
+            ],
         ]
     ];
 
@@ -67,7 +79,6 @@ class UserServiceProvider extends ServiceProvider implements DeferrableProvider
         $repository = $this->app->get(Repository::class);
 
         if ($repository->has('chronicler')) {
-
             $repository->set('chronicler.repositories', array_merge(
                 $repository->get('chronicler.repositories'),
                 $this->userRepository

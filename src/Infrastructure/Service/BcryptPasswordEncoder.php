@@ -26,14 +26,15 @@ final class BcryptPasswordEncoder implements PasswordEncoder
         $this->encoder = $encoder;
     }
 
-    /**
-     * @param ClearPassword $clearPassword
-     * @return EncodedPassword|BcryptPassword
-     */
-    public function __invoke(ClearPassword $clearPassword): EncodedPassword
+    public function encode(ClearPassword $clearPassword): EncodedPassword
     {
         $encodedPassword = $this->encoder->make($clearPassword->toString());
 
         return BcryptPassword::fromString($encodedPassword);
+    }
+
+    public function check(ClearPassword $clearPassword, EncodedPassword $currentPassword): bool
+    {
+        return $this->encoder->check($clearPassword->toString(), $currentPassword->toString());
     }
 }

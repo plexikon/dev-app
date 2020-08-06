@@ -7,5 +7,16 @@ use Plexikon\DevApp\Model\User\Value\EncodedPassword;
 
 interface PasswordEncoder
 {
-    public function __invoke(ClearPassword $clearPassword): EncodedPassword;
+    /**
+     * @param ClearPassword $clearPassword
+     * @return EncodedPassword
+     */
+    public function encode(ClearPassword $clearPassword): EncodedPassword;
+
+    /**
+     * @param ClearPassword $clearPassword
+     * @param EncodedPassword $password
+     * @return bool
+     */
+    public function check(ClearPassword $clearPassword, EncodedPassword $password): bool;
 }
