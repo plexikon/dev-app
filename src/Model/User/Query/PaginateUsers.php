@@ -8,12 +8,17 @@ final class PaginateUsers
     private int $limit;
     private string $column;
     private string $direction;
+    private array $scopes;
 
-    public function __construct(int $limit = 10, string $column = 'email', string $direction = 'asc')
+    public function __construct(int $limit = 10,
+                                string $column = 'email',
+                                string $direction = 'asc',
+                                array $scopes = [])
     {
         $this->limit = $limit;
         $this->column = $column;
         $this->direction = $direction;
+        $this->scopes = $scopes;
     }
 
     public function limit(): int
@@ -29,5 +34,10 @@ final class PaginateUsers
     public function direction(): string
     {
         return $this->direction;
+    }
+
+    public function scopes(): array
+    {
+        return $this->scopes;
     }
 }

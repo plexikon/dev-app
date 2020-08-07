@@ -18,7 +18,9 @@ final class PaginateUsersHandler
 
     public function query(PaginateUsers $query, Deferred $promise): void
     {
-        $users = $this->userFinder->paginate($query->limit(), $query->column(), $query->direction());
+        $users = $this->userFinder->paginate(
+            $query->limit(), $query->column(), $query->direction(), $query->scopes()
+        );
 
         $promise->resolve($users);
     }

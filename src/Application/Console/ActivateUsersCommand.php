@@ -4,21 +4,42 @@ declare(strict_types=1);
 namespace Plexikon\DevApp\Application\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
+use Plexikon\Chronicle\Reporter\LazyReporter;
+use Plexikon\DevApp\Model\User\Query\PaginateUsers;
+use Plexikon\DevApp\Model\User\Value\UserStatus;
 use Plexikon\DevApp\Projection\User\UserModel;
 
 final class ActivateUsersCommand extends Command
 {
     protected $signature = 'app:activate_users';
 
+    private LazyReporter $reporter;
+
     public function handle(): void
     {
-        // for simplicity
-        $users = UserModel::has('activation')->get()->each(function (UserModel $user): void {
+        /** @var LazyReporter $reporter */
+        $this->reporter = $this->getLaravel()->get(LazyReporter::class);
+
+        $notEnabledUsers = $this->queryNotEnabledUsers();
+
+        $$notEnabledUsers->each(function (UserModel $user): void {
             $this->call('app:activate_user',
-                ['activation_token' => $user->activation->token]
+                ['activation_token' => $user->getRelation('activation')->token]
             );
         });
 
-        $this->info("{$users->count()} users activated");
+        $this->info("{$notEnabledUsers->count()} users activated");
+    }
+
+    private function queryNotEnabledUsers(): Collection
+    {
+        $promise = $this->reporter->publishQuery(
+            new PaginateUsers(1000, 'email', 'asc', [
+                'status' => UserStatus::PENDING_REGISTRATION()->toString()
+            ])
+        );
+
+        return $this->reporter->handlePromise($promise)->getCollection();
     }
 }

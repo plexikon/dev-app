@@ -3,12 +3,10 @@ declare(strict_types=1);
 
 namespace Plexikon\DevApp\Projection\User;
 
-use DateTimeImmutable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Plexikon\Chronicle\Clock\SystemClock;
-use Plexikon\DevApp\Model\User\Value\ActivationTokenWithExpiration;
 
 final class UserFinder
 {
@@ -37,9 +35,19 @@ final class UserFinder
         return $this->model->newQuery()->where('email', $email)->first();
     }
 
-    public function paginate(int $limit = 10, string $column = 'email', string $direction = 'asc'): LengthAwarePaginator
+    public function paginate(int $limit = 10,
+                             string $column = 'email',
+                             string $direction = 'asc',
+                             array $scopes = []): LengthAwarePaginator
     {
-        return $this->model->newQuery()->orderBy($column, $direction)->paginate($limit);
+        $query = $this->model->newQuery();
+        $query->orderBy($column, $direction);
+
+        if ($status = $scopes['status'] ?? null) {
+            $query->where('status', $status);
+        }
+
+        return $query->paginate($limit);
     }
 
     /**

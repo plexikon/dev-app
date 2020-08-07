@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use Plexikon\Chronicle\Reporter\LazyReporter;
 use Plexikon\DevApp\Model\User\Query\PaginateUsers;
 use Plexikon\DevApp\Model\User\Value\UserId;
+use Plexikon\DevApp\Model\User\Value\UserStatus;
 use Plexikon\DevApp\Projection\User\UserModel;
 
 final class ChangeAndResetUsersPasswordCommand extends Command
@@ -16,21 +17,19 @@ final class ChangeAndResetUsersPasswordCommand extends Command
 
     protected LazyReporter $reporter;
 
-    public function handle()
+    public function handle(): void
     {
         $this->reporter = $this->getLaravel()->get(LazyReporter::class);
 
-        $enabledUsers = $this->queryUsers();
+        $enabledUsers = $this->queryEnabledUsers();
 
         $enabledUsers->each(function (UserModel $user): void {
-            if ($user->isEnabled()) {
-                $fixedPassword = 'password123';
-                $otherPassword = 'fixMePassword123';
+            $fixedPassword = 'password123';
+            $otherPassword = 'fixMePassword123';
 
-                $this->callChangePasswordCommand($user->getId(), $fixedPassword, $otherPassword);
+            $this->callChangePasswordCommand($user->getId(), $fixedPassword, $otherPassword);
 
-                $this->callChangePasswordCommand($user->getId(), $otherPassword, $fixedPassword);
-            }
+            $this->callChangePasswordCommand($user->getId(), $otherPassword, $fixedPassword);
         });
 
         $this->info("{$enabledUsers->count()} Password user(s) changed and reset to default");
@@ -46,9 +45,13 @@ final class ChangeAndResetUsersPasswordCommand extends Command
         ]);
     }
 
-    private function queryUsers(): Collection
+    private function queryEnabledUsers(): Collection
     {
-        $query = $this->reporter->publishQuery(new PaginateUsers(1000));
+        $query = $this->reporter->publishQuery(
+            new PaginateUsers(
+                1000, 'email', 'asc', ['status' => UserStatus::ACTIVATED()->toString()]
+            )
+        );
 
         return $this->reporter->handlePromise($query)->getCollection();
     }
