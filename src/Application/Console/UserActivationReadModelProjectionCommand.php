@@ -27,10 +27,12 @@ final class UserActivationReadModelProjectionCommand extends AbstractPersistentP
     {
         return [
             'activation-token-requested' => function (array $state, ActivationTokenRequested $event): void {
+                $activationToken = $event->currentActivationToken();
+
                 $this->readModel()->stack('insert', [
                     'user_id' => $event->aggregateRootId(),
-                    'token' => $event->activationToken()->token()->toString(),
-                    'expired_at' => $event->activationToken()->formatExpiredAt()
+                    'token' => $activationToken->token()->toString(),
+                    'expired_at' => $activationToken->formatExpiredAt()
                 ]);
             },
 

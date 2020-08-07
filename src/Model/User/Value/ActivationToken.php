@@ -20,7 +20,7 @@ final class ActivationToken implements Value
 
     public static function fromString(string $token): self
     {
-        Assertion::length($token, self::LENGTH);
+        Assertion::length($token, self::LENGTH, ActivationTokenWithExpiration::VALIDATION_MESSAGE);
 
         return new self($token);
     }

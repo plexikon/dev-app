@@ -6,6 +6,7 @@ namespace Plexikon\DevApp\Model\User\Value;
 use DateInterval;
 use DateTimeImmutable;
 use DateTimeZone;
+use Plexikon\DevApp\Model\User\Exception\InvalidActivationToken;
 use Plexikon\DevApp\Shared\Model\Value;
 
 final class ActivationTokenWithExpiration implements Value
@@ -13,6 +14,7 @@ final class ActivationTokenWithExpiration implements Value
     public const EXPIRED_AT_TIMEZONE = 'UTC';
     public const EXPIRED_AT_FORMAT = 'Y-m-d\TH:i:s.u';
     public const EXPIRED_AT_INTERVAL = 'PT3H';
+    public const VALIDATION_MESSAGE = 'Activation token not found or has been expired';
 
     private ActivationToken $token;
     private DateTimeImmutable $expiredAt;
@@ -39,15 +41,10 @@ final class ActivationTokenWithExpiration implements Value
         );
 
         if (!$expiredAt instanceof DateTimeImmutable) {
-
+            throw new InvalidActivationToken(self::VALIDATION_MESSAGE);
         }
 
         return new self(ActivationToken::fromString($token), $expiredAt);
-    }
-
-    private static function now(): DateTimeImmutable
-    {
-        return new DateTimeImmutable('now', new DateTimeZone(self::EXPIRED_AT_TIMEZONE));
     }
 
     public function sameValueAs(Value $aValue): bool
@@ -80,5 +77,10 @@ final class ActivationTokenWithExpiration implements Value
     public function formatExpiredAt(): string
     {
         return $this->expiredAt->format(self::EXPIRED_AT_FORMAT);
+    }
+
+    private static function now(): DateTimeImmutable
+    {
+        return new DateTimeImmutable('now', new DateTimeZone(self::EXPIRED_AT_TIMEZONE));
     }
 }

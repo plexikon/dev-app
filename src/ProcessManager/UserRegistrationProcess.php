@@ -8,7 +8,7 @@ use Plexikon\DevApp\Model\User\Command\RequestActivationToken;
 use Plexikon\DevApp\Model\User\Event\UserRegistered;
 use Plexikon\DevApp\Model\User\Value\ActivationTokenWithExpiration;
 
-final class OnUserRegistrationProcess
+final class UserRegistrationProcess
 {
     private ReportCommand $reporter;
 

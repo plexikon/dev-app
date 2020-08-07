@@ -9,9 +9,6 @@ use React\Promise\Deferred;
 
 final class GetUserByIdHandler
 {
-    /**
-     * @var UserFinder
-     */
     private UserFinder $userFinder;
 
     public function __construct(UserFinder $userFinder)

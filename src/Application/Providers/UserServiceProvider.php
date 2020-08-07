@@ -34,7 +34,7 @@ use Plexikon\DevApp\Model\User\Repository\UserCollection;
 use Plexikon\DevApp\Model\User\Service\PasswordEncoder;
 use Plexikon\DevApp\Model\User\Service\UniqueEmail;
 use Plexikon\DevApp\Model\User\User;
-use Plexikon\DevApp\ProcessManager\OnUserRegistrationProcess;
+use Plexikon\DevApp\ProcessManager\UserRegistrationProcess;
 use Plexikon\DevApp\Projection\Stream;
 
 class UserServiceProvider extends ServiceProvider implements DeferrableProvider
@@ -62,12 +62,11 @@ class UserServiceProvider extends ServiceProvider implements DeferrableProvider
 
         'event' => [
             'user-registered' => [
-                OnUserRegistrationProcess::class
+                UserRegistrationProcess::class
             ],
             'user-email-changed' => [],
             'user-password-changed' => [],
             'activation-token-requested' => [
-                // differ from renewActivationToken
                 // send welcome email with activation token
             ],
             'user-activated' => []

@@ -10,19 +10,29 @@ use Plexikon\DevApp\Model\User\Value\UserStatus;
 
 final class ActivationTokenRequested extends AggregateChanged
 {
-    private ?ActivationTokenWithExpiration $activationToken;
+    private ?ActivationTokenWithExpiration $oldToken = null;
+    private ?ActivationTokenWithExpiration $currentToken;
     private ?UserStatus $userStatus;
 
     public static function forUser(UserId $userId,
-                                   ActivationTokenWithExpiration $activationToken,
+                                   ActivationTokenWithExpiration $currentToken,
+                                   ?ActivationTokenWithExpiration $oldToken,
                                    UserStatus $userStatus): self
     {
         $self = self::occur($userId->toString(), [
-            'activation_token' => $activationToken->token()->toString(),
-            'token_expired_at' => $activationToken->formatExpiredAt()
+            'current_token' => [
+                'token' => $currentToken->token()->toString(),
+                'expired_at' => $currentToken->formatExpiredAt(),
+            ],
+            'old_token' => null === $oldToken ? null : [
+                'token' => $oldToken->token()->toString(),
+                'expired_at' => $oldToken->formatExpiredAt(),
+            ],
+            'user_status' => $userStatus->getValue()
         ]);
 
-        $self->activationToken = $activationToken;
+        $self->currentToken = $currentToken;
+        $self->oldToken = $oldToken;
         $self->userStatus = $userStatus;
 
         return $self;
@@ -33,11 +43,32 @@ final class ActivationTokenRequested extends AggregateChanged
         return UserId::fromString($this->aggregateRootId());
     }
 
-    public function activationToken(): ActivationTokenWithExpiration
+    public function currentActivationToken(): ActivationTokenWithExpiration
     {
-        return $this->activationToken ?? ActivationTokenWithExpiration::fromString(
-                $this->payload['activation_token'],
-                $this->payload['token_expired_at']
+        return $this->currentToken ?? ActivationTokenWithExpiration::fromString(
+                $this->payload['current_token']['token'],
+                $this->payload['current_token']['expired_at']
             );
+    }
+
+    public function oldActivationToken(): ?ActivationTokenWithExpiration
+    {
+        if ($this->oldToken) {
+            return $this->oldToken;
+        }
+
+        if (null === $this->payload['old_token']) {
+            return null;
+        }
+
+        return ActivationTokenWithExpiration::fromString(
+            $this->payload['old_token']['token'],
+            $this->payload['old_token']['expired_at']
+        );
+    }
+
+    public function userStatus(): UserStatus
+    {
+        return $this->userStatus ?? UserStatus::byValue($this->payload['user_status']);
     }
 }

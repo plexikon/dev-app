@@ -51,8 +51,8 @@ final class ActivateUserCommand extends Command
 
     private function activateUser(UserId $userId, ActivationTokenWithExpiration $token): void
     {
-        $this->reporter->publishCommand(
-            ActivateUser::forUser($userId->toString(), $token->token()->toString(), $token->formatExpiredAt())
-        );
+        $command = ActivateUser::forUser($userId->toString(), $token->token()->toString(), $token->formatExpiredAt());
+
+        $this->reporter->publishCommand($command);
     }
 }
