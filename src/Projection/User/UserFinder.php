@@ -41,11 +41,13 @@ final class UserFinder
                              array $scopes = []): LengthAwarePaginator
     {
         $query = $this->model->newQuery();
-        $query->orderBy($column, $direction);
+        $query->with('activation');
 
         if ($status = $scopes['status'] ?? null) {
             $query->where('status', $status);
         }
+
+        $query->orderBy($column, $direction);
 
         return $query->paginate($limit);
     }

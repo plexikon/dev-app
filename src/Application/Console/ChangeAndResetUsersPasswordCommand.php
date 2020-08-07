@@ -49,7 +49,7 @@ final class ChangeAndResetUsersPasswordCommand extends Command
     {
         $query = $this->reporter->publishQuery(
             new PaginateUsers(
-                1000, 'email', 'asc', ['status' => UserStatus::ACTIVATED()->toString()]
+                1000, 'email', 'asc', ['status' => UserStatus::ACTIVATED]
             )
         );
 
