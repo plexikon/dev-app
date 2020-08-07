@@ -6,7 +6,6 @@ namespace Plexikon\DevApp\Model\User;
 use Plexikon\Chronicle\Chronicling\Aggregate\Concerns\HasAggregateRoot;
 use Plexikon\Chronicle\Support\Contract\Chronicling\Aggregate\AggregateId;
 use Plexikon\Chronicle\Support\Contract\Chronicling\Aggregate\AggregateRoot;
-use Plexikon\DevApp\Model\User\Event\ActivationTokenRenewed;
 use Plexikon\DevApp\Model\User\Event\ActivationTokenRequested;
 use Plexikon\DevApp\Model\User\Event\UserActivated;
 use Plexikon\DevApp\Model\User\Event\UserEmailChanged;
@@ -71,24 +70,7 @@ final class User implements AggregateRoot
             return;
         }
 
-        $this->recordThat(ActivationTokenRequested::forUser($this->userId(), $activationToken, $this->status));
-    }
-
-    public function renewActivationToken(ActivationTokenWithExpiration $activationToken)
-    {
-        if ($this->isEnabled()) {
-            throw UserAlreadyActivated::withUserId($this->userId());
-        }
-
-        if ($activationToken->isExpired()) {
-            throw InvalidActivationToken::invalid($this->userId(), $activationToken);
-        }
-
-        if ($this->activationToken && $activationToken->sameValueAs($this->activationToken)) {
-            return;
-        }
-
-        $this->recordThat(ActivationTokenRenewed::forUser($this->userId(), $activationToken, $this->activationToken(), $this->status));
+        $this->recordThat(ActivationTokenRequested::forUser($this->userId(), $activationToken, $this->activationToken(), $this->status));
     }
 
     public function activateUser(ActivationTokenWithExpiration $activationToken): void
@@ -139,7 +121,7 @@ final class User implements AggregateRoot
 
     public function applyActivationTokenRequested(ActivationTokenRequested $event): void
     {
-        $this->activationToken = $event->activationToken();
+        $this->activationToken = $event->currentActivationToken();
     }
 
     public function applyUserActivated(UserActivated $event): void
