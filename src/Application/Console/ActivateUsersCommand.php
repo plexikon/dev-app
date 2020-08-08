@@ -23,7 +23,7 @@ final class ActivateUsersCommand extends Command
 
         $notEnabledUsers = $this->queryNotEnabledUsers();
 
-        $$notEnabledUsers->each(function (UserModel $user): void {
+        $notEnabledUsers->each(function (UserModel $user): void {
             $this->call('app:activate_user',
                 ['activation_token' => $user->getRelation('activation')->token]
             );
