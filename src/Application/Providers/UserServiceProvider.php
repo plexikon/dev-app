@@ -29,11 +29,13 @@ use Plexikon\DevApp\Model\User\Handler\GetUserByEmailHandler;
 use Plexikon\DevApp\Model\User\Handler\GetUserByIdHandler;
 use Plexikon\DevApp\Model\User\Handler\PaginateUsersHandler;
 use Plexikon\DevApp\Model\User\Handler\RegisterUserHandler;
+use Plexikon\DevApp\Model\User\Handler\RenewActivationTokenHandler;
 use Plexikon\DevApp\Model\User\Handler\RequestActivationTokenHandler;
 use Plexikon\DevApp\Model\User\Repository\UserCollection;
 use Plexikon\DevApp\Model\User\Service\PasswordEncoder;
 use Plexikon\DevApp\Model\User\Service\UniqueEmail;
 use Plexikon\DevApp\Model\User\User;
+use Plexikon\DevApp\ProcessManager\NewActivationTokenRequestedProcess;
 use Plexikon\DevApp\ProcessManager\UserRegistrationProcess;
 use Plexikon\DevApp\Projection\Stream;
 
@@ -50,6 +52,7 @@ class UserServiceProvider extends ServiceProvider implements DeferrableProvider
             'change-user-email' => ChangeUserEmailHandler::class,
             'change-user-password' => ChangeUserPasswordHandler::class,
             'request-activation-token' => RequestActivationTokenHandler::class,
+            'renew-activation-token' => RenewActivationTokenHandler::class,
             'activate-user' => ActivateUserHandler::class,
         ],
 
@@ -66,10 +69,16 @@ class UserServiceProvider extends ServiceProvider implements DeferrableProvider
             ],
             'user-email-changed' => [],
             'user-password-changed' => [],
+            'user-activated' => [],
             'activation-token-requested' => [
                 // send welcome email with activation token
             ],
-            'user-activated' => []
+            'new-activation-token-requested' => [
+                NewActivationTokenRequestedProcess::class
+            ],
+            'activation-token-renewed' => [
+                // send email with activation token
+            ],
         ]
     ];
 
