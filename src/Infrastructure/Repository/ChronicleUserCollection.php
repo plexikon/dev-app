@@ -11,9 +11,6 @@ use Plexikon\DevApp\Model\User\Value\UserId;
 
 final class ChronicleUserCollection implements UserCollection
 {
-    /**
-     * @var AggregateRepository
-     */
     private AggregateRepository $aggregateRepository;
 
     public function __construct(AggregateRepository $aggregateRepository)
