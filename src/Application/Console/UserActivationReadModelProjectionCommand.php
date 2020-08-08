@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Plexikon\DevApp\Application\Console;
 
 use Plexikon\Chronicle\Support\Console\AbstractPersistentProjectionCommand;
+use Plexikon\DevApp\Model\User\Event\ActivationTokenRenewed;
 use Plexikon\DevApp\Model\User\Event\ActivationTokenRequested;
 use Plexikon\DevApp\Model\User\Event\UserActivated;
 use Plexikon\DevApp\Projection\Stream;
@@ -34,6 +35,10 @@ final class UserActivationReadModelProjectionCommand extends AbstractPersistentP
                     'token' => $activationToken->token()->toString(),
                     'expired_at' => $activationToken->formatExpiredAt()
                 ]);
+            },
+
+            'activation-token-renewed' => function (array $state, ActivationTokenRenewed $event): void {
+                $this->readModel()->stack('renewActivationToken', $event);
             },
 
             'user-activated' => function (array $state, UserActivated $event): void {
