@@ -53,13 +53,14 @@ final class UserReadModelProjectionCommand extends AbstractPersistentProjectionC
             'user-password-changed' => function (array $state, UserPasswordChanged $event): void {
                 $this->readModel()->stack('update', $event->aggregateRootId(), [
                     'password' => $event->currentPassword()->toString(),
-                    'updated_at' => $event->header(MessageHeader::TIME_OF_RECORDING)
+                    'updated_at' => $event->header(MessageHeader::TIME_OF_RECORDING),
                 ]);
             },
 
             'user-activated' => function (array $state, UserActivated $event): array {
                 $this->readModel()->stack('update', $event->aggregateRootId(),[
-                    'status' => $event->currentUserStatus()->getValue()
+                    'status' => $event->currentUserStatus()->getValue(),
+                    'updated_at' => $event->header(MessageHeader::TIME_OF_RECORDING)
                 ]);
 
                 $state['pending']--;

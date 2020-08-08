@@ -62,6 +62,7 @@ final class UserFinder
 
         return $this->model
             ->newQuery()
+            ->with('activation')
             ->whereHas('activation', function (Builder $builder) use ($activationToken, $now): void {
                 $builder->where('token', $activationToken);
                 $builder->where('expired_at', '>', $now);

@@ -37,7 +37,9 @@ final class ActivateUsersCommand extends Command
         $promise = $this->reporter->publishQuery(
             PaginateUsers::fromPayload([
                 'limit' => 10000,
-                'status' => UserStatus::PENDING_REGISTRATION()->toString()
+                'scopes' => [
+                    'status' => UserStatus::PENDING_REGISTRATION
+                ]
             ])
         );
 

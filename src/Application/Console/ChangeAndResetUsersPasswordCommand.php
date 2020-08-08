@@ -51,7 +51,7 @@ final class ChangeAndResetUsersPasswordCommand extends Command
             PaginateUsers::fromPayload(
                 [
                     'limit' => 10000,
-                    'status' => UserStatus::ACTIVATED
+                    'scopes' => ['status' => UserStatus::ACTIVATED]
                 ]
             )
         );
