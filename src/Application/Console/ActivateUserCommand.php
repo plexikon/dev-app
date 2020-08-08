@@ -36,7 +36,7 @@ final class ActivateUserCommand extends Command
 
     private function queryUser(ActivationToken $token): UserActivationModel
     {
-        $query = new GetUserByActivationToken($token->toString());
+        $query = GetUserByActivationToken::fromPayload(['token' => $token->toString()]);
 
         $user = $this->reporter->handlePromise(
             $this->reporter->publishQuery($query)

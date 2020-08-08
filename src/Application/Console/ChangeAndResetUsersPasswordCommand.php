@@ -48,8 +48,11 @@ final class ChangeAndResetUsersPasswordCommand extends Command
     private function queryEnabledUsers(): Collection
     {
         $query = $this->reporter->publishQuery(
-            new PaginateUsers(
-                1000, 'email', 'asc', ['status' => UserStatus::ACTIVATED]
+            PaginateUsers::fromPayload(
+                [
+                    'limit' => 10000,
+                    'status' => UserStatus::ACTIVATED
+                ]
             )
         );
 

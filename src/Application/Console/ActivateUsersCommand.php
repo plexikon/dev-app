@@ -35,7 +35,8 @@ final class ActivateUsersCommand extends Command
     private function queryNotEnabledUsers(): Collection
     {
         $promise = $this->reporter->publishQuery(
-            new PaginateUsers(1000, 'email', 'asc', [
+            PaginateUsers::fromPayload([
+                'limit' => 10000,
                 'status' => UserStatus::PENDING_REGISTRATION()->toString()
             ])
         );

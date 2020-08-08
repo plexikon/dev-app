@@ -3,41 +3,32 @@ declare(strict_types=1);
 
 namespace Plexikon\DevApp\Model\User\Query;
 
-final class PaginateUsers
+use Plexikon\Chronicle\Reporter\Query;
+
+final class PaginateUsers extends Query
 {
     private int $limit;
     private string $column;
     private string $direction;
     private array $scopes;
 
-    public function __construct(int $limit = 10,
-                                string $column = 'email',
-                                string $direction = 'asc',
-                                array $scopes = [])
-    {
-        $this->limit = $limit;
-        $this->column = $column;
-        $this->direction = $direction;
-        $this->scopes = $scopes;
-    }
-
     public function limit(): int
     {
-        return $this->limit;
+        return $this->payload['limit'] ?? 10;
     }
 
     public function column(): string
     {
-        return $this->column;
+        return $this->payload['column'] ?? 'email';
     }
 
     public function direction(): string
     {
-        return $this->direction;
+        return $this->payload['direction'] ?? 'asc';
     }
 
     public function scopes(): array
     {
-        return $this->scopes;
+        return $this->payload['scopes'] ?? [];
     }
 }

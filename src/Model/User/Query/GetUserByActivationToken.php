@@ -3,19 +3,13 @@ declare(strict_types=1);
 
 namespace Plexikon\DevApp\Model\User\Query;
 
+use Plexikon\Chronicle\Reporter\Query;
 use Plexikon\DevApp\Model\User\Value\ActivationToken;
 
-final class GetUserByActivationToken
+final class GetUserByActivationToken extends Query
 {
-    private string $token;
-
-    public function __construct(string $token)
-    {
-        $this->token = $token;
-    }
-
     public function token(): ActivationToken
     {
-        return ActivationToken::fromString($this->token);
+        return ActivationToken::fromString($this->payload['token']);
     }
 }
